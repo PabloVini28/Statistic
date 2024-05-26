@@ -8,7 +8,8 @@ from sqlalchemy import create_engine
 warnings.filterwarnings('ignore')
 
 # Conexão com banco de dados
-con = mysql.connector.connect(host="localhost", database="probabilidade_estatistica", password="", user="root")
+# Preencha a seguinte linha com seus respectivos nomes
+con = mysql.connector.connect(host="", database="probabilidade_estatistica", password="", user="")
 cursor = con.cursor()
 
 meses = ["janeiro", "fevereiro", "marco", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]
@@ -20,13 +21,13 @@ print("------------------------------------------------------------------------"
 print("Calculos Descritivos -")
 print("------------------------------------------------------------------------\n") 
 
-# Fetch all data from the database
+# Busca todos os dados no banco de dados
 data = []
 for mes in meses:
     cursor.execute(f"SELECT * FROM {mes};")
     data.append(cursor.fetchone())
 
-# Calculate descriptive statistics
+# CAlculos descritivos
 resultados = []
 
 for i in range(1, 9):
@@ -71,13 +72,13 @@ print("------------------------------------------------------------------------\
 valores_nascidosVivos = []
 
 for mes in meses:
-    # Read the data from the database
+    # ler os dados do banco de dados
     df_mes = pd.read_sql_query(f"SELECT nascidosVivos FROM {mes};", con=engine)
-    # Extract the value from the dataframe
+    # Extrai o valor
     valor = df_mes['nascidosVivos'][0]
-    # Append the value to the list
+    # Adiciona na lista
     valores_nascidosVivos.append(valor)
-    # Print the value
+    # Imprimi o valor
     print(f"Nascidos vivos em {mes}: {valor}")
     
     
