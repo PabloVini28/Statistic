@@ -5,11 +5,12 @@ from sklearn.neural_network import MLPRegressor
 import pandas as pd
 import warnings 
 from sqlalchemy import create_engine
+import matplotlib.pyplot as plt
 warnings.filterwarnings('ignore')
 
 # Conexão com banco de dados
 # Preencha a seguinte linha com seus respectivos nomes
-con = mysql.connector.connect(host="", database="probabilidade_estatistica", password="", user="")
+con = mysql.connector.connect(host="localhost", database="probabilidade_estatistica", password="", user="root")
 cursor = con.cursor()
 
 meses = ["janeiro", "fevereiro", "marco", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]
@@ -27,7 +28,7 @@ for mes in meses:
     cursor.execute(f"SELECT * FROM {mes};")
     data.append(cursor.fetchone())
 
-# CAlculos descritivos
+# Calculos descritivos
 resultados = []
 
 for i in range(1, 9):
@@ -234,3 +235,47 @@ regressor = MLPRegressor(hidden_layer_sizes=(100, 50), activation='relu', solver
 regressor.fit(meses_numeros_pesoIdeal, X)
 previsto = regressor.predict([[13]])
 print("Numero previsto de recem nascidos com peso ideal no mes 13:", previsto[0])
+
+
+def plot_descriptive_statistics(results):
+    variables = [res['variavel'] for res in results]
+    medias = [res['media'] for res in results]
+    medianas = [res['mediana'] for res in results]
+    modas = [res['moda'] for res in results]
+    medias_harmonicas = [res['media_harmonica'] for res in results]
+    desvios_padrao = [res['desvio_padrao'] for res in results]
+    variancias = [res['variancia'] for res in results]
+    
+    fig, axs = plt.subplots(3, 2, figsize=(15, 15))
+    
+    axs[0, 0].bar(variables, medias, color='blue')
+    axs[0, 0].set_title('Médias')
+    axs[0, 0].set_xticklabels(variables, rotation=45, ha="right")
+
+    axs[0, 1].bar(variables, medianas, color='orange')
+    axs[0, 1].set_title('Medianas')
+    axs[0, 1].set_xticklabels(variables, rotation=45, ha="right")
+    
+    axs[1, 0].bar(variables, modas, color='green')
+    axs[1, 0].set_title('Modas')
+    axs[1, 0].set_xticklabels(variables, rotation=45, ha="right")
+    
+    axs[1, 1].bar(variables, medias_harmonicas, color='red')
+    axs[1, 1].set_title('Médias Harmônicas')
+    axs[1, 1].set_xticklabels(variables, rotation=45, ha="right")
+    
+    axs[2, 0].bar(variables, desvios_padrao, color='purple')
+    axs[2, 0].set_title('Desvios Padrão')
+    axs[2, 0].set_xticklabels(variables, rotation=45, ha="right")
+    
+    axs[2, 1].bar(variables, variancias, color='brown')
+    axs[2, 1].set_title('Variâncias')
+    axs[2, 1].set_xticklabels(variables, rotation=45, ha="right")
+    
+    plt.tight_layout()
+    plt.show()
+
+# Chama a função para plotar os gráficos
+plot_descriptive_statistics(resultados)
+
+
