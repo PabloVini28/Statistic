@@ -1,9 +1,12 @@
 # Statistics 📈
 ## This Work is a Statistical Analysis of Quixadá Babies in 2013-2022
-  - First of all, install the MySQL in your machine and make a DataBase called "probabilidade_estatistica", after that you can import the .sql archive to your server.
+  - First of all, install the MySQL in your machine and make a DataBase called "dadoshospitalares", after that you can import the .sql archive to your server.
   - By the way, open the .py archive and make sure about the library installation.
   - Now, make sure about the mysql.connector in your code, put your informations and run the .py with MySQL open.
   - You will see the descriptive calculations and a machine learning operating with a Neural NetWork about the Quixadá, Ceará, Brasil babies.
+  - PS: The dataset was taken from the website [![SUS](https://img.shields.io/badge/SUS-0000FF?style=for-the-badge&labelColor=0000FF&logoColor=white)](http://plataforma.saude.gov.br/natalidade/nascidos-vivos/)
+
+
 # Statistic Course - 🖥️
 ## Developers :👥
 
