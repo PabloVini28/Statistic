@@ -57,7 +57,7 @@ def calcular_estatisticas(dados):
         "moda": calcular_moda(dados),
         "desvio_padrao": np.std(dados) if len(dados) > 0 else None,
         "variancia": np.var(dados) if len(dados) > 0 else None,
-        "media_harmonica": statistics.harmonic_mean(dados) if len(dados) > 0 else None
+        "media_harmonica": statistics.harmonic_mean(dados) if len(dados) > 0 and all(x > 0 for x in dados) else None
     }
     return estatisticas
 
@@ -77,8 +77,65 @@ estatisticas_por_mes = {
     for mes in meses
 }
 
-# Exibir resultados
+def plotar_estatisticas(estatisticas_por_mes):
+    meses = list(estatisticas_por_mes.keys())
+    
+    for dado in dadosn:  # Loop sobre cada tipo de dado
+        medias = [estatisticas_por_mes[mes][dado]['media'] for mes in meses]
+        medianas = [estatisticas_por_mes[mes][dado]['mediana'] for mes in meses]
+        desvios_padrao = [estatisticas_por_mes[mes][dado]['desvio_padrao'] for mes in meses]
+        variancias = [estatisticas_por_mes[mes][dado]['variancia'] for mes in meses]
+        medias_harmonicas = [estatisticas_por_mes[mes][dado]['media_harmonica'] for mes in meses]
+        
+        # Gráfico da Média
+        plt.figure(figsize=(12, 6))
+        plt.bar(meses, medias, color='blue')
+        plt.ylabel('Média')
+        plt.title(f'Média por Mês para {dado}')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+        
+        # Gráfico da Mediana
+        plt.figure(figsize=(12, 6))
+        plt.bar(meses, medianas, color='green')
+        plt.ylabel('Mediana')
+        plt.title(f'Mediana por Mês para {dado}')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+        
+        # Gráfico do Desvio Padrão
+        plt.figure(figsize=(12, 6))
+        plt.bar(meses, desvios_padrao, color='red')
+        plt.ylabel('Desvio Padrão')
+        plt.title(f'Desvio Padrão por Mês para {dado}')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
 
+        
+        # Gráfico da Variância
+        plt.figure(figsize=(12, 6))
+        plt.bar(meses, variancias, color='orange')
+        plt.ylabel('Variância')
+        plt.title(f'Variância por Mês para {dado}')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+        
+        # Gráfico da Média Harmônica
+        plt.figure(figsize=(12, 6))
+        plt.bar(meses, [x if x is not None else 0 for x in medias_harmonicas], color='cyan')
+        plt.ylabel('Média Harmônica')
+        plt.title(f'Média Harmônica por Mês para {dado}')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+
+
+
+# Exibir resultados
 print("------------------------------------------------------------------------") 
 print("------------------------anos de 2013 a 2022-----------------------------") 
 print("------------------------------------------------------------------------") 
@@ -94,6 +151,9 @@ for mes, estatisticas in estatisticas_por_mes.items():
         print(f"Média harmônica: {stats['media_harmonica']}")
      
 print("------------------------------------------------------------------------") 
+
+# Plotar gráficos
+plotar_estatisticas(estatisticas_por_mes)
 
 # Prepare the data
 def prepare_data(dados):
@@ -126,8 +186,8 @@ def train_model(df, dado_tipo):
     
     # Build the model
     model = Sequential()
-    model.add(Dense(64, input_dim=1, activation='relu'))
-    model.add(Dense(32, activation='relu'))
+    model.add(Dense(50, input_dim=1, activation='relu'))
+    model.add(Dense(10, activation='relu'))
     model.add(Dense(1))
     model.compile(optimizer=Adam(learning_rate=0.01), loss='mse')
     
@@ -182,49 +242,21 @@ for dado_tipo, valores in formatted_predictions.items():
     print(f'\n{dado_tipo} para 2023:')
     for mes, valor in valores.items():
         print(f'{mes.capitalize()}: {valor:.2f}')
+# Plot the predictions
+def plot_predictions(formatted_predictions):
+    meses = list(formatted_predictions[next(iter(formatted_predictions))].keys())
+    
+    for dado_tipo, valores in formatted_predictions.items():
+        plt.figure(figsize=(10, 6))
+        plt.plot(meses, list(valores.values()), marker='o', label='Previsões do Modelo', color='red')
+        plt.xticks(rotation=45)
+        plt.xlabel('Meses')
+        plt.ylabel(dado_tipo)
+        plt.title(f'Previsões de {dado_tipo} para 2023')
+        plt.legend()
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
 
-formatted_predictions
-
-"""
-def plot_descriptive_statistics(results):
-    variables = [res['variavel'] for res in results]
-    medias = [res['media'] for res in results]
-    medianas = [res['mediana'] for res in results]
-    modas = [res['moda'] for res in results]
-    medias_harmonicas = [res['media_harmonica'] for res in results]
-    desvios_padrao = [res['desvio_padrao'] for res in results]
-    variancias = [res['variancia'] for res in results]
-    
-    fig, axs = plt.subplots(3, 2, figsize=(15, 15))
-    
-    axs[0, 0].bar(variables, medias, color='blue')
-    axs[0, 0].set_title('Médias')
-    axs[0, 0].set_xticklabels(variables, rotation=45, ha="right")
-
-    axs[0, 1].bar(variables, medianas, color='orange')
-    axs[0, 1].set_title('Medianas')
-    axs[0, 1].set_xticklabels(variables, rotation=45, ha="right")
-    
-    axs[1, 0].bar(variables, modas, color='green')
-    axs[1, 0].set_title('Modas')
-    axs[1, 0].set_xticklabels(variables, rotation=45, ha="right")
-    
-    axs[1, 1].bar(variables, medias_harmonicas, color='red')
-    axs[1, 1].set_title('Médias Harmônicas')
-    axs[1, 1].set_xticklabels(variables, rotation=45, ha="right")
-    
-    axs[2, 0].bar(variables, desvios_padrao, color='purple')
-    axs[2, 0].set_title('Desvios Padrão')
-    axs[2, 0].set_xticklabels(variables, rotation=45, ha="right")
-    
-    axs[2, 1].bar(variables, variancias, color='brown')
-    axs[2, 1].set_title('Variâncias')
-    axs[2, 1].set_xticklabels(variables, rotation=45, ha="right")
-    
-    plt.tight_layout()
-    plt.show()
-
-# Chama a função para plotar os gráficos
-plot_descriptive_statistics(resultados)
-
-"""
+# Plotar previsões
+plot_predictions(formatted_predictions)
