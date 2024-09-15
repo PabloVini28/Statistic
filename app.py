@@ -23,7 +23,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # Conexão com banco de dados
-engine = create_engine("mysql+mysqlconnector://root:RaulOficial1202@localhost/dadoshospitalares")
+engine = create_engine("mysql+mysqlconnector://root:coloque_seu_usuario@localhost/dadoshospitalares")
 
 
 # Conexão com banco de dados
